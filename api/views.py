@@ -1,6 +1,7 @@
-#from django.shortcuts import render
+# from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -9,14 +10,16 @@ import json
 from api.models import WellnessEntry
 from api.serializers import WellnessEntrySerializer
 from datetime import date
+
+
 # Create your views here.
 
 class WellnessAPI(APIView):
 
     def get(self, request):
-        '''
+        """
         Test view that will return all wellness entries to the user as JSON
-        '''
+        """
 
         # Consider reimplementing with url configuration/regex instead of queries
 
@@ -44,8 +47,18 @@ class WellnessAPI(APIView):
             # Use safe=True if sending dicts
             return JsonResponse(serializer.data, safe=False, status=200)
 
+    def post(self, request):
 
+        data = JSONParser().parse(request)
+        print(data)
+        print()
+        serializer = WellnessEntrySerializer(data=data)
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
 
+        return HttpResponse(serializer.errors, status=400)
 
 
 class SendData(APIView):
@@ -68,13 +81,13 @@ class SendData(APIView):
         Return the JSON with status code as response
         '''
         entry = WellnessEntry(user=1,
-                            date=date.today(),
-                            sleep_score=3,
-                            energy_score=4,
-                            soreness_score=4,
-                            stress_score=2,
-                            mood_score=4,
-                            total_score=17)
+                              date=date.today(),
+                              sleep_score=3,
+                              energy_score=4,
+                              soreness_score=4,
+                              stress_score=2,
+                              mood_score=4,
+                              total_score=17)
         entry.save()
         serializer = WellnessEntrySerializer(entry)
         data = serializer.data
@@ -87,12 +100,11 @@ class SendData(APIView):
         # HttpResponse requires you to serialize data to JSON as above
         return HttpResponse(content, status=status.HTTP_200_OK)
 
-
     def post(self, request, format=None):
         data = request.data
         for key in data:
             print(data[key])
-        #print(data)
+        # print(data)
 
         # Can send a message response but will need to be in JSON for android app
         return Response("message", status=status.HTTP_200_OK)
