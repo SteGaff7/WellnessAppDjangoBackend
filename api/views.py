@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 import json
 
-from api.models import WellnessEntry
-from api.serializers import WellnessEntrySerializer
+from django.contrib.auth.models import User
+from api.models import WellnessEntry, TestOwner
+from api.serializers import WellnessEntrySerializer, TestOwnerSerializer, UserSerializer
 from datetime import date
 
 
@@ -53,6 +54,9 @@ class WellnessAPI(APIView):
         print(data)
         print()
         serializer = WellnessEntrySerializer(data=data)
+
+        # Add check that user and date don't already exist and if so custom error that
+        # Android app can use to display Toast message
         if serializer.is_valid():
             print(serializer.validated_data)
             serializer.save()
@@ -61,13 +65,68 @@ class WellnessAPI(APIView):
         return HttpResponse(serializer.errors, status=400)
 
 
+class UserAPI(APIView):
+    def post(self, request):
+        data = JSONParser().parse(request)
+        print(data)
+
+        user_id = data['owner']['username']
+        text = data['text']
+        user = User.objects.get_by_natural_key(user_id)
+
+        # t = TestOwner(owner=user, text="this is  more text")
+        # t.save()
+
+
+        data = {'owner': user, 'text': text}
+
+        print(data)
+
+        serializer = TestOwnerSerializer(data=data)
+        # serializer = UserSerializer(data=data)
+
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            # serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        else:
+            print("No")
+        print(serializer.error_messages)
+        return HttpResponse(serializer.errors, status=400)
+
+        # return HttpResponse(status=200)
+
+
+        # print(type(user))
+        # print(user)
+
+        # if request.data['user']:
+        #     print("Found")
+
+        # return HttpResponse(status=200)
+
+        # data = JSONParser().parse(request)
+        # print(data)
+        # print()
+        # serializer = TestOwnerSerializer(data=data)
+        #
+        # if serializer.is_valid():
+        #     print("valid")
+        #     print(serializer.validated_data)
+        #     return JsonResponse(serializer.data, status=201)
+        #
+        # return HttpResponse(serializer.errors, status=400)
+
+
+
+
 class SendData(APIView):
 
     # def get(self, request, format=None):
     #     x = {"name" : "stephen"}
     #     ser = json.dumps(x)
     #
-    #     # If using repsonse then it must be serialized
+    #     # If using response then it must be serialized
     #     return Response(ser, status=status.HTTP_200_OK)
     #     # return HttpResponse(ser, status=status.HTTP_200_OK)
 

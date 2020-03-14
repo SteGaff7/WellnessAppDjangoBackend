@@ -25,6 +25,8 @@ SECRET_KEY = 'h-kdd238ey-rfbjuy#da*%g29o$c6u)o%_efg-l&k78nz4br(#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# SECURE_SSL_REDIRECT = True
+
 ALLOWED_HOSTS = ['127.0.0.1',
                 '192.168.0.53',
                 '37.228.253.100',
@@ -43,7 +45,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'music',
     'api',
+    'practice_serialization',
+    'rest_framework.authtoken',
+    "sslserver",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
