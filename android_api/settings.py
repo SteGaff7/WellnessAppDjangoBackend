@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['127.0.0.1',
 
 
 # Application definition
-
+# Uninstalling apps: https://stackoverflow.com/questions/3329773/django-how-to-completely-uninstall-a-django-app
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'music',
     'api',
     'practice_serialization',
     'rest_framework.authtoken',

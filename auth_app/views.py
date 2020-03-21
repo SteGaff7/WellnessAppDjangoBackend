@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 
@@ -9,6 +10,7 @@ from rest_framework.views import APIView
 from auth_app.serializers import UserSerializer
 
 from rest_framework.authtoken.models import Token
+
 
 class CheckAuth(APIView):
     permission_classes = [IsAuthenticated]
@@ -31,17 +33,29 @@ class Register(APIView):
 
         serializer = UserSerializer(data=data)
 
+        # try:
+        #     serializer.is_valid()
+        #     print("here")
+        # except ValidationError as e:
+        #     print("caught")
+        #     print(e)
+        #
+        # return HttpResponse(status=400)
+
         if serializer.is_valid():
             instance = serializer.save()
+
             # Try obtain auth token here and return it after user and token generated
-            print(type(instance))
             token = Token.objects.get(user=instance)
-            print(token)
+            # token is a Token instance
             token_value = getattr(token, "key")
-            print(token_value)
+
             return JsonResponse({'token': token_value}, status=201)
 
         else:
-            print(serializer.errors)
+            # Not sure how to handle errors here yet
+            # print(serializer.errors['password'][0])
+            print(serializer.errors['password'])
             # Add custom message or error code in here?
-            return HttpResponse(status=400)
+            # 409 Conflict for existing user
+            return HttpResponse(serializer.errors, status=400)
