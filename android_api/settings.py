@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'api',
     'practice_serialization',
     'rest_framework.authtoken',
+    'wellness_api',
     "sslserver",
 ]
 
