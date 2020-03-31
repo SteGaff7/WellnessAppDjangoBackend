@@ -8,9 +8,10 @@ from wellness_api.models import WellnessEntry
 class WellnessEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = WellnessEntry
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['id', 'user']
         # Won't validate user field and then we can obtain in create method
-        read_only_fields = ['user']
+        # read_only_fields = ['user']
         # Used validators in model so all are automatically generated
 
     def create(self, validated_data):

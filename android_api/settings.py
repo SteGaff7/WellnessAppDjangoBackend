@@ -28,7 +28,7 @@ DEBUG = True
 # SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = ['127.0.0.1',
-                '192.168.0.53',
+                '192.168.0.165',
                 '37.228.253.100',
                 '0.0.0.0']
 
